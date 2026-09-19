@@ -1,2 +1,24 @@
-# gyr-Beijing
-    My last autumn and winter in Beijing 🍂
+# gyr · 北京最后一个秋冬 PWA 1.0
+
+这是一个纯静态、无需服务器数据库的私人 PWA。
+
+## 部署
+把整个文件夹上传到任意 HTTPS 静态托管服务即可。入口文件是 `index.html`。
+PWA / 离线缓存只有在 HTTPS（或 localhost）环境下才会正常启用。
+
+## iPhone 安装
+用 Safari 打开部署后的网址 → 分享 → 添加到主屏幕。
+
+## 后期修改
+日常内容（任务、照片、日期、心情、文字）直接在应用里改。
+标题和首页文字在「设置」里改。
+功能升级前，在「设置」→「导出我的北京备份」保存 JSON；升级后再导入。
+
+## 文件
+- index.html：应用本体
+- manifest.webmanifest：PWA 安装信息
+- sw.js：离线缓存
+- icon-192.png / icon-512.png：主屏幕图标
+- icon.svg：矢量图标
+
+注意：照片存于浏览器本地存储，原图请继续保留在系统相册。

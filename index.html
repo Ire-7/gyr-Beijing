@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>gyr · 北京最后一个秋冬</title>
+<meta name="theme-color" content="#f4efe5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="北京秋冬">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<style>
+:root{--bg:#eee7db;--paper:#fffaf1;--ink:#29241f;--muted:#756b60;--line:#d8cbb8;--rust:#9b5e3c;--shadow:#cbbca7}
+*{box-sizing:border-box}body{margin:0;background:#d9d1c5;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC",sans-serif}
+.app{max-width:540px;margin:auto;min-height:100vh;background:var(--bg);padding-bottom:88px}
+header{padding:38px 23px 22px;background:var(--paper);border-bottom:1px solid var(--line)}
+.kicker{font-size:11px;letter-spacing:.2em;color:var(--rust);font-weight:800}h1{font:700 34px/1.12 Georgia,"Songti SC",serif;margin:8px 0}.lead{font:16px/1.75 Georgia,"Songti SC",serif;color:#4b433b}
+.progress{margin-top:18px}.bar{height:8px;border:1px solid #9e9181;border-radius:10px;overflow:hidden}.fill{height:100%;background:var(--rust);width:0;transition:.3s}.prog{font-size:12px;color:var(--muted);margin-top:7px}
+main{padding:18px}.tabs{display:flex;gap:7px;position:sticky;top:0;z-index:10;background:rgba(238,231,219,.95);padding:8px 0 12px;backdrop-filter:blur(8px)}
+.tab{flex:1;border:1px solid var(--line);background:var(--paper);padding:9px 4px;border-radius:20px;font-size:12px;color:var(--muted)}.tab.on{background:#51483f;color:white;border-color:#51483f}
+.panel{display:none}.panel.on{display:block}.season{font:700 21px Georgia,"Songti SC",serif;margin:17px 2px 9px}.hint{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.card{background:var(--paper);border:1px solid var(--line);padding:14px;margin:10px 0;box-shadow:2px 3px 0 rgba(203,188,167,.6)}
+.row{display:flex;gap:11px;align-items:flex-start}.check{width:25px;height:25px;border:2px solid #5c5349;border-radius:50%;flex:none;display:grid;place-items:center}.done .check{background:#5c5349;color:white}.done .check:after{content:"✓"}.title{font:700 16px Georgia,"Songti SC",serif}.desc{font-size:12px;line-height:1.55;color:var(--muted);margin-top:4px}.meta{font-size:11px;color:#9a8875;margin-top:8px}
+.actions{display:flex;gap:7px;margin-top:11px}.mini{border:1px solid var(--line);background:#f8f0e4;padding:7px 9px;border-radius:3px;font-size:11px}
+.photo{width:100%;max-height:300px;object-fit:cover;margin-top:11px;border:8px solid white;box-shadow:1px 2px 5px #bbb}
+.notearea{width:100%;margin-top:10px;border:0;border-bottom:1px dashed #b9a995;background:transparent;padding:8px 2px;resize:vertical;min-height:42px;font:13px/1.5 inherit;color:var(--ink)}
+.fab{position:fixed;right:max(20px,calc((100vw - 540px)/2 + 20px));bottom:22px;width:58px;height:58px;border:0;border-radius:50%;background:#51483f;color:white;font-size:27px;box-shadow:0 5px 15px #8e8377}
+.modal{position:fixed;inset:0;background:#0008;display:none;z-index:50;padding:24px;align-items:center;justify-content:center}.modal.on{display:flex}.sheet{width:min(480px,100%);background:var(--paper);padding:20px;border-radius:8px}
+.sheet h2{font:700 22px Georgia,"Songti SC",serif;margin:0 0 14px}.field{width:100%;padding:11px;border:1px solid var(--line);background:white;margin:6px 0 11px;font:14px inherit}.primary{width:100%;padding:12px;border:0;background:#51483f;color:white;margin-top:7px}.cancel{width:100%;padding:10px;border:0;background:transparent;color:var(--muted)}
+.protocol{padding:18px;background:#f8efdf;border:1px dashed #826f5b;line-height:1.8;margin-top:12px}.protocol b{font-family:Georgia,"Songti SC",serif}
+.bigbtn{width:100%;padding:13px;border:1px solid #51483f;background:#51483f;color:white;margin:9px 0}.memory{font:15px/1.8 Georgia,"Songti SC",serif}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:13px}.stamp{display:inline-block;border:2px solid var(--rust);color:var(--rust);padding:4px 8px;transform:rotate(-4deg);font-size:11px;margin-top:12px}
+footer{text-align:center;padding:28px 18px;color:var(--muted);font-size:11px;line-height:1.7}
+
+.moodbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.mood{border:1px solid var(--line);background:#f8f0e4;padding:6px 9px;border-radius:16px;font-size:12px}.mood.sel{background:#d9c4aa;border-color:#9b5e3c}
+.ticket{background:#fffdf6;border:1px dashed #887664;padding:18px;margin:12px 0;position:relative}.ticket:before,.ticket:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:var(--bg);top:50%;margin-top:-7px}.ticket:before{left:-8px}.ticket:after{right:-8px}
+.month{font:700 18px Georgia,"Songti SC",serif;margin:18px 0 8px}.tiny{font-size:11px;color:var(--muted)}.mode{padding:16px;background:#eee0ca;border:1px solid var(--line);margin:12px 0}.mode b{font-family:Georgia,"Songti SC",serif}
+.export{border:1px solid #51483f;background:transparent;color:#51483f;width:100%;padding:12px;margin-top:8px}
+@media print{body,.app{background:white}.tabs,.fab,#add,.bigbtn,.export,.actions,.moodbar,footer{display:none!important}.panel{display:none!important}#archive{display:block!important}.ticket{break-inside:avoid;box-shadow:none}.app{max-width:100%;padding:0}main{padding:10px}}
+</style></head>
+<body><div class="app">
+<header><div class="kicker">GYR · BEIJING · 2026—2027</div><h1 id="heroTitle">北京最后一个秋冬</h1>
+<div class="lead" id="heroLead">不是为了完成北京。<br>只是趁我还在这里，再和它发生一点事情。</div>
+<div class="progress"><div class="bar"><div class="fill" id="fill"></div></div><div class="prog" id="prog"></div></div></header>
+<main>
+<div class="tabs"><button class="tab on" data-p="journey">去看看</button><button class="tab" data-p="album">照片墙</button><button class="tab" data-p="random">随机偏航</button><button class="tab" data-p="letter">离京前</button><button class="tab" data-p="archive">回忆卷</button><button class="tab" data-p="settings">设置</button></div>
+
+<section id="journey" class="panel on"><div class="hint">点圆圈完成 · 点「+照片」留下现场 · 每件事都可以写一句当时的gyr。右下角 ＋ 可以随时添加新事情。</div><div id="cards"></div></section>
+<section id="album" class="panel"><div class="season">这一季，我看见的北京</div><div class="hint">照片不是证明你来过，是以后某一天帮你突然回到这里。</div><div id="gallery"></div></section>
+<section id="random" class="panel"><div class="season">随机事件协议</div><div class="protocol"><b>如果某一天，我突然冒出一句：</b><br>“诶，我想去看看。”<br><br>只要没有硬 deadline，成本也承受得起——<b>就去。</b><br><small>不查值不值得 · 不要求留下什么 · 允许临时偏航</small></div><button class="bigbtn" id="draw">🎲 给今天抽一个偏航任务</button><div class="card memory" id="drawResult">今天还没有抽签。</div></section>
+<section id="letter" class="panel"><div class="season">离京前，再打开这一页</div><div class="card memory">我来北京，不只是为了读完一个硕士、做完实验、找到工作。<br><br>我也在这里，过了三年人生。<br><br>不需要完成北京。去过的、错过的、临时拐进去的路，都算。<br><br><b>北京，我看过了。<br>我也要继续往前看了。</b> 🦅<div class="stamp">神叨叨项目 · 北京分部</div></div>
+<textarea id="finalNote" class="notearea" style="min-height:140px" placeholder="离开北京前，写给那时的自己……"></textarea></section>
+
+<section id="archive" class="panel">
+<div class="season">gyr · 北京秋冬回忆卷</div>
+<div class="mode"><b>⏱ 秋招忙碌模式</b><br><span class="tiny">今天只有30分钟也算。出去走15分钟、买杯热饮、看一棵树、拍一张天色，都可以成为记录。</span></div>
+<button class="bigbtn" id="quick">给我一个30分钟小任务</button>
+<div class="card memory" id="quickResult">今天不用完成“大事情”。</div>
+<div id="timeline"></div>
+<button class="export" id="printBook">🧾 生成 / 打印我的秋冬回忆长卷</button>
+</section>
+
+<section id="settings" class="panel">
+<div class="season">设置与数据</div>
+<div class="card">
+<div class="title">这本手帐的名字</div>
+<input id="bookTitle" class="field" value="北京最后一个秋冬">
+<div class="title">首页的一句话</div>
+<textarea id="bookLead" class="field">不是为了完成北京。只是趁我还在这里，再和它发生一点事情。</textarea>
+<button class="bigbtn" id="saveSettings">保存外观文字</button>
+</div>
+<div class="card">
+<div class="title">数据备份</div>
+<div class="desc">升级网页、换手机之前先导出。任务、日期、心情、文字和已压缩照片都会进入备份文件。</div>
+<button class="bigbtn" id="exportData">⬇️ 导出我的北京备份</button>
+<label class="bigbtn" style="display:block;text-align:center;cursor:pointer">⬆️ 导入备份<input id="importData" type="file" accept="application/json" hidden></label>
+</div>
+<div class="card">
+<div class="title">关于照片</div>
+<div class="desc">照片会压缩后保存在浏览器本地。Safari 对网站本地空间有限制，因此原图仍请保留在系统相册。数据特别多时，优先导出备份。</div>
+</div>
+</section>
+</main><footer>数据保存在当前浏览器。照片会压缩后存入本机；清除浏览器网站数据可能丢失记录。重要照片仍建议保留在系统相册。</footer>
+<button class="fab" id="add">＋</button></div>
+
+<div class="modal" id="modal"><div class="sheet"><h2>新增一件想做的事</h2>
+<input class="field" id="newTitle" placeholder="比如：去国子监旁边乱晃">
+<textarea class="field" id="newDesc" placeholder="想怎么做？为什么突然想去？"></textarea>
+<select class="field" id="newSeason"><option>秋</option><option>初冬</option><option>雪</option><option>离京前</option><option>随机</option></select>
+<button class="primary" id="saveNew">加入我的北京</button><button class="cancel" id="close">取消</button></div></div>
+<input type="file" accept="image/*" id="file" hidden>
+
+<script>
+const seed=[
+["秋","胡同随机游走","找一条没走过的胡同，不导航，乱走一小时。"],
+["秋","去看香山红叶","不征服香山，只去看一次北京的秋天。"],
+["秋","收集四点后的金色","挑一个晴天下午，拍下十个属于自己的北京。"],
+["秋","去看一大片银杏","不找最佳机位，只站在树下面。"],
+["秋","爬一次景山","站高一点，认真看看这座城市。"],
+["雪","等北京第一场雪","能挤出半小时，就出去踩一踩。"],
+["初冬","冬日下午去天坛","去看蓝天、古柏、红墙和冷空气。"],
+["随机","坐一趟无目的夜间公交","去一个平常不会去的地方，再回来。"],
+["雪","冬天去什刹海滑冰","开放时再去；天气拥有最终审批权。"],
+["初冬","看一次真正的北方冬天","颐和园或圆明园：枯树、冰面、风。"],
+["随机","漂亮地独自出门一天","不是面试，不是证件照，只因为今天想漂亮。"],
+["离京前","回到一个有意义的地方","坐一小时。什么都不用总结。"]
+].map((x,i)=>({id:"s"+i,season:x[0],title:x[1],desc:x[2],done:false,note:"",photo:"",date:"",mood:""}));
+let data;
+try{data=JSON.parse(localStorage.getItem("gyrBJ2"))||seed}catch(e){data=seed}
+const $=x=>document.getElementById(x); let photoTarget=null;
+function persist(){localStorage.setItem("gyrBJ2",JSON.stringify(data));render()}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function render(){
+ let html="",groups=["秋","初冬","雪","随机","离京前"];
+ groups.forEach(g=>{let a=data.filter(x=>x.season===g);if(!a.length)return;html+=`<div class="season">${g}</div>`;a.forEach(x=>html+=`<div class="card ${x.done?"done":""}" data-id="${x.id}">
+ <div class="row"><div class="check" onclick="toggle('${x.id}')"></div><div><div class="title">${esc(x.title)}</div><div class="desc">${esc(x.desc)}</div><div class="meta">${x.date?esc(x.date)+" · ":""}${esc(x.season)}</div></div></div>
+ ${x.photo?`<img class="photo" src="${x.photo}">`:""}
+ <textarea class="notearea" placeholder="今天的gyr想记一句……" oninput="note('${x.id}',this.value)">${esc(x.note)}</textarea>
+ <div class="moodbar">${["🍂平静","☀️开心","🦅自由","❄️安静","😑累死了","✨神奇"].map(m=>`<button class="mood ${x.mood===m?"sel":""}" onclick="setMood('${x.id}','${m}')">${m}</button>`).join("")}</div>
+ <div class="actions"><button class="mini" onclick="pick('${x.id}')">＋照片</button><button class="mini" onclick="dateIt('${x.id}')">日期印章</button><button class="mini" onclick="del('${x.id}')">删除</button></div></div>`)});$("cards").innerHTML=html;
+ let photos=data.filter(x=>x.photo);$("gallery").innerHTML=photos.length?photos.map(x=>`<div class="card"><img class="photo" style="margin-top:0" src="${x.photo}"><div class="title" style="margin-top:10px">${esc(x.title)}</div><div class="desc">${esc(x.date)} ${esc(x.note)}</div></div>`).join(""):'<div class="empty">还没有照片。<br>等第一张北京秋天进来。</div>';
+ let n=data.filter(x=>x.done).length;$("fill").style.width=(data.length?n/data.length*100:0)+"%";$("prog").textContent=`${n} / ${data.length} · 世界探索进度`;
+ let mem=data.filter(x=>x.done||x.photo||x.note).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+ $("timeline").innerHTML=mem.length?mem.map(x=>`<div class="ticket"><div class="tiny">${esc(x.date||"某一天")} · ${esc(x.season)} ${esc(x.mood||"")}</div><div class="title" style="margin-top:5px">${esc(x.title)}</div>${x.photo?`<img class="photo" src="${x.photo}">`:""}<div class="desc" style="margin-top:8px">${esc(x.note||x.desc)}</div></div>`).join(""):'<div class="empty">回忆卷还是空白。<br>这很好——秋冬才刚刚开始。</div>';
+
+}
+window.toggle=id=>{let x=data.find(x=>x.id===id);x.done=!x.done;if(x.done&&!x.date)x.date=new Date().toLocaleDateString("zh-CN");persist()}
+window.note=(id,v)=>{let x=data.find(x=>x.id===id);x.note=v;localStorage.setItem("gyrBJ2",JSON.stringify(data))}
+window.dateIt=id=>{let x=data.find(x=>x.id===id);let v=prompt("留下日期：",x.date||new Date().toLocaleDateString("zh-CN"));if(v!==null){x.date=v;persist()}}
+window.del=id=>{if(confirm("从手帐里删掉这件事？")){data=data.filter(x=>x.id!==id);persist()}}
+window.pick=id=>{photoTarget=id;$("file").click()}
+$("file").onchange=e=>{let f=e.target.files[0];if(!f)return;let img=new Image(),r=new FileReader();r.onload=ev=>img.src=ev.target.result;img.onload=()=>{let c=document.createElement("canvas"),max=1200,s=Math.min(1,max/Math.max(img.width,img.height));c.width=img.width*s;c.height=img.height*s;c.getContext("2d").drawImage(img,0,0,c.width,c.height);let x=data.find(x=>x.id===photoTarget);x.photo=c.toDataURL("image/jpeg",.78);persist()};r.readAsDataURL(f);e.target.value=""}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("on"));b.classList.add("on");$(b.dataset.p).classList.add("on")})
+$("add").onclick=()=> $("modal").classList.add("on");$("close").onclick=()=> $("modal").classList.remove("on");
+$("saveNew").onclick=()=>{let t=$("newTitle").value.trim();if(!t)return alert("先给它一个名字。");data.push({id:"u"+Date.now(),season:$("newSeason").value,title:t,desc:$("newDesc").value.trim(),done:false,note:"",photo:"",date:"",mood:""});$("newTitle").value="";$("newDesc").value="";$("modal").classList.remove("on");persist()}
+$("draw").onclick=()=>{let a=data.filter(x=>!x.done);if(!a.length)a=data;let x=a[Math.floor(Math.random()*a.length)];$("drawResult").innerHTML=`<b>${esc(x.title)}</b><br>${esc(x.desc)}<br><br><small>今天不一定要完成。抽到它，只是世界递来一张小纸条。</small>`}
+$("finalNote").value=localStorage.getItem("gyrFinal")||"";$("finalNote").oninput=e=>localStorage.setItem("gyrFinal",e.target.value);
+render();
+
+window.setMood=(id,m)=>{let x=data.find(x=>x.id===id);x.mood=(x.mood===m?"":m);persist()}
+const quicks=["不导航走一条没走过的小路，15分钟后再决定要不要回去。","买一杯热的，坐在室外看十分钟北京的天。","找到今天最好看的一棵树，给它拍一张照片。","下楼走20分钟，只拍一种颜色。","提前一站下车，走回去。","去校园里一个平常不会停留的地方坐十分钟。","抬头找今天的月亮；找不到也算完成。","今天不打卡，只记录一句：我现在在北京。"];
+$("quick").onclick=()=>{$("quickResult").innerHTML="<b>"+quicks[Math.floor(Math.random()*quicks.length)]+"</b><br><br><small>30分钟也算一次偏航。</small>"}
+$("printBook").onclick=()=>window.print();
+
+
+const prefs=JSON.parse(localStorage.getItem("gyrPrefs")||'{"title":"北京最后一个秋冬","lead":"不是为了完成北京。只是趁我还在这里，再和它发生一点事情。"}');
+function applyPrefs(){
+ $("heroTitle").textContent=prefs.title;
+ $("heroLead").textContent=prefs.lead;
+ $("bookTitle").value=prefs.title;
+ $("bookLead").value=prefs.lead;
+ document.title="gyr · "+prefs.title;
+}
+$("saveSettings").onclick=()=>{prefs.title=$("bookTitle").value.trim()||"北京最后一个秋冬";prefs.lead=$("bookLead").value.trim();localStorage.setItem("gyrPrefs",JSON.stringify(prefs));applyPrefs();alert("保存好了。")}
+$("exportData").onclick=()=>{
+ const pack={version:1,exportedAt:new Date().toISOString(),tasks:data,finalNote:localStorage.getItem("gyrFinal")||"",prefs:prefs};
+ const blob=new Blob([JSON.stringify(pack,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gyr_北京秋冬_备份_"+new Date().toISOString().slice(0,10)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+$("importData").onchange=e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader();r.onload=ev=>{try{
+  const pack=JSON.parse(ev.target.result);
+  if(!Array.isArray(pack.tasks)) throw new Error();
+  if(!confirm("导入会覆盖当前手帐数据。继续吗？")) return;
+  data=pack.tasks; localStorage.setItem("gyrBJ2",JSON.stringify(data));
+  if(pack.finalNote!==undefined)localStorage.setItem("gyrFinal",pack.finalNote);
+  if(pack.prefs){Object.assign(prefs,pack.prefs);localStorage.setItem("gyrPrefs",JSON.stringify(prefs));}
+  applyPrefs();render();$("finalNote").value=localStorage.getItem("gyrFinal")||"";alert("备份已导入。");
+ }catch(err){alert("这个备份文件无法读取。")}};r.readAsText(f);e.target.value="";
+}
+applyPrefs();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+
+</script></body></html>
